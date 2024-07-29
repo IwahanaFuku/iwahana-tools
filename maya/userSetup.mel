@@ -1,5 +1,5 @@
 global proc import_ihtools(){
-    python("from ihtools import main ");
-    python("main.main()");}
+    python("from ihtools import setgui ");
+    python("setgui.main()");}
 
 import_ihtools;
