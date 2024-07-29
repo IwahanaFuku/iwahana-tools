@@ -1,0 +1,5 @@
+global proc import_ihtools(){
+    python("from ihtools import main ");
+    python("main.main()");}
+
+import_ihtools;
