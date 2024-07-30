@@ -2,11 +2,12 @@ import sys
 from maya import cmds
 from maya import mel
 import os
-sys.path.append('../')
-from ihtools.general import getter  # noqa
+
+sys.path.append("../")
+from ihtools.common.magetter import GetDirPath  # noqa
 
 
-class Checker():
+class Checker:
 
     def check_file_name(self, **kwargs) -> bool:
         """
@@ -20,9 +21,8 @@ class Checker():
         ----------
         """
 
-        get_dir_path = getter.GetDirPath()
-        dir_name = get_dir_path.get_dir_name()
-        file_name = get_dir_path.get_file_name()
+        dir_name = GetDirPath.get_dir_name()
+        file_name = GetDirPath.get_file_name()
 
         if dir_name != file_name:
 
@@ -51,7 +51,7 @@ class Checker():
         extension = "." + kwargs["extension"]
         file_path = cmds.file(q=True, sceneName=True)
 
-        if os.path.basename(file_path)[-(len(extension)):] != extension:
+        if os.path.basename(file_path)[-(len(extension)) :] != extension:
 
             return False
         else:
@@ -80,7 +80,7 @@ class Checker():
         upper_limit = int(kwargs["upper_limit"])
         transforms = kwargs["transforms"]
         cmds.select(transforms)
-        mel.eval('setPolyCountVisibility(1);')
+        mel.eval("setPolyCountVisibility(1);")
         tris = cmds.polyEvaluate(t=1)
 
         if tris > upper_limit:
@@ -101,9 +101,11 @@ class Checker():
             あればFalse
         ----------
         """
-        mel.eval('polyCleanupArgList 4 { "1","2","1","0","1","1","1","0","1","1e-05","1","1e-05","0","1e-05","0","1","1","0" };')  # noqa
+        mel.eval(
+            'polyCleanupArgList 4 { "1","2","1","0","1","1","1","0","1","1e-05","1","1e-05","0","1e-05","0","1","1","0" };'
+        )  # noqa
 
-        if bool(cmds.ls(sl=True)) is True:
+        if bool(cmds.ls(sl=True)):
 
             return False
         else:
@@ -127,7 +129,7 @@ class Checker():
         fourCams = {"perspShape", "topShape", "frontShape", "sideShape"}
         otherCams = cams - fourCams
 
-        if bool(otherCams) is True:
+        if bool(otherCams):
 
             return False
         else:
@@ -157,7 +159,7 @@ class Checker():
         shape = cmds.listRelatives(transforms)[0]
         history = [his for his in all_history if his != shape]
 
-        if bool(history) is True:
+        if bool(history):
 
             return False
         else:
@@ -195,7 +197,7 @@ class Checker():
                 or lsp != zero_double_three
                 or wrp != zero_double_three
                 or wsp != zero_double_three
-               ):
+            ):
                 return False
 
             else:
@@ -250,7 +252,9 @@ class Checker():
         """
 
         all_dis_layers = cmds.ls(type="displayLayer")
-        dis_layers = [layer for layer in all_dis_layers if layer != 'defaultLayer']  # noqa
+        dis_layers = [
+            layer for layer in all_dis_layers if layer != "defaultLayer"
+        ]  # noqa
         anim_layers = cmds.ls(type="animLayer")
 
         if bool(dis_layers) is not True or bool(anim_layers) is not True:
@@ -260,11 +264,9 @@ class Checker():
 
             return True
 
-    def check_texture_name(self,
-                           transforms,
-                           attr: str = ".color",
-                           head: str = "",
-                           tail_end: str = "") -> bool:
+    def check_texture_name(
+        self, transforms, attr: str = ".color", head: str = "", tail_end: str = ""
+    ) -> bool:
         """
         テクスチャの命名規則が正しいものかチェック
 
@@ -287,8 +289,7 @@ class Checker():
         ----------
         """
 
-        get_dir_path = getter.GetDirPath()
-        texture_path = get_dir_path.get_texture_path(transforms, attr)
+        texture_path = GetDirPath.get_texture_path(transforms, attr)
         texture_file_name = os.path.basename(os.path.splitext(texture_path)[0])
         split_file_name = list(texture_file_name.split("_"))
 
@@ -306,10 +307,9 @@ class Checker():
 
         return True
 
-    def check_texture_extension(self,
-                                transforms,
-                                attr: str = "color",
-                                extension: str = ".png") -> bool:
+    def check_texture_extension(
+        self, transforms, attr: str = "color", extension: str = ".png"
+    ) -> bool:
         """
         テクスチャの拡張子が指定したものと同一かチェック
 
@@ -330,8 +330,7 @@ class Checker():
         ----------
         """
 
-        get_dir_path = getter.GetDirPath()
-        texture_path = get_dir_path.get_texture_path(transforms, attr)
+        texture_path = GetDirPath.get_texture_path(transforms, attr)
 
         if os.path.splitext(texture_path)[1] != extension:
             print("***拡張子が .{} ではありません。***".format(extension))

@@ -3,16 +3,16 @@
 """
 
 from maya import cmds
-from maya import mel
 import os
-import shutil
 
-class GetNode():
+
+class GetNode:
     """
-       maya内のノードを取得する関数群を集めたクラス
+    maya内のノードを取得する関数群を集めたクラス
     """
 
-    def get_SGs(self, transform):
+    @staticmethod
+    def get_SGs(transform):
         """選択したモデルにアサインされているshadingEngineノードの名称を取得します
         Parameters:
         ----------
@@ -26,11 +26,16 @@ class GetNode():
         ----------
         """
         shapenodes = cmds.listRelatives(transform)
-        SGs = cmds.listConnections(shapenodes, s=False, d=True, t='shadingEngine')
+        SGs = cmds.listConnections(shapenodes,
+                                   s=False,
+                                   d=True,
+                                   t="shadingEngine"
+                                   )
         SGs = list(set(SGs))
         return SGs
 
-    def get_material(self, SG):
+    @staticmethod
+    def get_material(SG):
         """選択したShadingGroupにアサインされているマテリアルの名称を取得します
 
         Parameters:
@@ -44,15 +49,19 @@ class GetNode():
             マテリアルの名称
         ----------
         """
-        mat_name = cmds.ls(cmds.listConnections(SG, s=True, d=False), mat=True)[0]
-        
+        mat_name = cmds.ls(
+            cmds.listConnections(SG, s=True, d=False), mat=True)[0]
+
         return mat_name
 
-class GetDirPath():
+
+class GetDirPath:
     """
-       mayaのシーンを構成するうえで関連するファイル、ファイルまでのパスを取得するための関数群を集めたクラス
+    mayaのシーンを構成するうえで関連するファイル、ファイルまでのパスを取得するための関数群を集めたクラス
     """
-    def get_dir_name(self):
+
+    @staticmethod
+    def get_dir_name():
         """シーンが格納されているディレクトリまでのフルパスを取得
         Returns:
         ----------
@@ -60,12 +69,13 @@ class GetDirPath():
             シーンが格納されているディレクトリまでのフルパス
         ----------
         """
-        file_path = cmds.file(q = True, sceneName= True)
+        file_path = cmds.file(q=True, sceneName=True)
         dir_name = os.path.basename(os.path.split(file_path)[0])
 
         return dir_name
-        
-    def get_file_name(self):
+
+    @staticmethod
+    def get_file_name():
         """開いているシーンファイルの名称を取得
         Returns:
         ----------
@@ -73,21 +83,22 @@ class GetDirPath():
             開いているシーンファイルの名称を取得
         ----------
         """
-        file_path = cmds.file(q = True, sceneName= True)
+        file_path = cmds.file(q=True, sceneName=True)
         file_name = os.path.basename(os.path.splitext(file_path)[0])
 
         return file_name
 
-    def get_texture_file(self, materials, attr):
+    @staticmethod
+    def get_texture_file(materials, attr):
         """マテリアルの指定のアトリビュートに接続されているノードの名称を取得
-        
+
         Parameters:
         ----------
         materials :attr
             マテリアルの名称
         attr : str
             取得したいアトリビュートの名称（Lambertマテリアルのカラーなら、".color"など）
-        
+
         Returns:
         ----------
         str
@@ -96,56 +107,39 @@ class GetDirPath():
         """
         attr_node_name = "{}.{}".format(materials, attr)
         texture_file_name = cmds.listConnections(attr_node_name)[0]
-        
+
         return texture_file_name
-        
-    def get_texture_path(self, texture_file_name):
+
+    @staticmethod
+    def get_texture_path(texture_file_name):
         """ファイルのアトリビュートに接続されているテクスチャのフルパスを取得
-        
+
         Parameters:
         ----------
         texture_file_name : str
             テクスチャが接続されているファイルの名称
-        
+
         Returns:
         ----------
         str
             ファイルのアトリビュートに接続されているテクスチャのフルパス
         ----------
         """
-        texture_path = cmds.getAttr("{}.fileTextureName".format(texture_file_name))
-        
+        texture_path = cmds.getAttr(
+            "{}.fileTextureName".format(texture_file_name))
+
         return texture_path
 
-    def get_maya_scripts_path(self):
-        """mayaのscriptsまでのpathを取得
-        
-        Returns:
-        ----------
-        str
-            mayaのscriptsまでのpathを取得
-        ----------
-        """
-        user = os.getlogin()
-        path = r"C:\Users\{}\Documents\maya\scripts".format(user)
 
-        return path
-
-        
-class ShowAttr():
+class ShowAttr:
     """
-       mayaのスクリプトを書く上でノードやアトリビュートの確認のための関数を集めたクラス
+    mayaのスクリプトを書く上でノードやアトリビュートの確認のための関数を集めたクラス
     """
-    
 
-    def __init__(self):
-        self.get_node = GetNode()
-        self.mat_name = self.get_node.get_material()
-    
-    
-    def show_material_attr(self):
+    @staticmethod
+    def show_material_attr():
         """マテリアルのアトリビュート一覧を取得します
-        
+
         Returns:
         ----------
         str[]
@@ -153,7 +147,6 @@ class ShowAttr():
         ----------
         """
 
-        material_attr = cmds.listAttr(self.mat_name)
+        material_attr = cmds.listAttr(GetNode.get_material())
 
         return material_attr
-
